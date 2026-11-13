@@ -16,6 +16,8 @@ async function main() {
     await page.getByRole("button", {name: "Verify replay"}).click();
     await page.getByText(/Verified all 4 transitions/).waitFor();
     await page.screenshot({path: process.env.RELAYBENCH_SCREENSHOT || "docs/demo.png", fullPage:true});
+    await page.getByRole("button", {name: "Compare outcomes"}).click();
+    await page.getByText(/Failed with 0 committed writes.*First state difference: step 2.*First visible difference: step 3/).waitFor();
     await page.setViewportSize({width: 390, height: 844});
     await page.getByRole("button", {name:/Blind retry · 42/}).first().click();
     await page.getByText("Failed", {exact:true}).waitFor();

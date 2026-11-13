@@ -10,4 +10,6 @@
 <p id="context">Run an experiment to inspect its tool calls and final inventory.</p>
 <div class="metrics"><div>Tool calls<strong id="steps">—</strong></div><div>Committed writes<strong id="writes">—</strong></div><div>Timeouts<strong id="timeouts">—</strong></div></div>
 <section><div class="sectionhead"><h3>Execution trace</h3><button disabled id="replay">Verify replay</button></div><p id="result" role="status"></p><div id="events"></div></section>
-<section><h3>Paired comparison</h3><p class="hint">Run the other baseline on the same seed and fault.</p><button disabled id="compare">Compare policies</button><p id="comparison" role="status"></p></section><section><h3>Evaluation checks</h3><div id="checks"></div></section></article></div><p id="error" role="alert"></p></main></body></html>
+<section><h3>Paired comparison</h3><p class="hint">Run the other baseline on the same seed and fault.</p><button disabled id="compare">Compare policies</button><p id="comparison" role="status"></p></section><section><h3>Replay with another fault</h3><p class="hint">Keep the recorded actions fixed and change what happens to the write.</p>
+<label>Replay fault<select id="alternate"></select></label><button disabled id="branch">Compare outcomes</button>
+<p id="outcomes" role="status"></p></section><section><h3>Evaluation checks</h3><div id="checks"></div></section></article></div><p id="error" role="alert"></p></main></body></html>

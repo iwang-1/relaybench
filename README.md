@@ -25,6 +25,10 @@ python3 -m relaybench serve
 
 Open [the local execution lab](http://127.0.0.1:8765). Leave **Reconcile on timeout**, **Lost acknowledgment** and seed **42** selected. Click **Run experiment**, then **Compare policies**. Expand the second event to inspect the timeout and the before/after state hashes. Select the failed blind-retry run in history and click **Verify replay**. Its two reservations reproduce exactly. The evaluator still marks it failed.
 
+### Change the fault and keep the decisions fixed
+
+Select the reconciled lost-acknowledgment run. Under **Replay with another fault**, choose **Timeout before commit** and click **Compare outcomes**. Both worlds return the same timeout on step 2, but only the original world has a receipt. The agent can first observe the difference when it inspects the ledger on step 3. Replaying its recorded finish action leaves the alternate world with zero reservations. A fresh policy run can choose to retry after inspecting that empty ledger.
+
 ## Reproduce the results
 
 ```sh
@@ -59,6 +63,7 @@ Choose the local model from the policy selector. On each turn it receives the re
 | POST | /api/runs | Execute once and return the ID and full trace |
 | GET | /api/runs | Latest 50 completed runs, newest first |
 | GET | /api/runs/{id} | Persisted actions, observations, final state and metrics |
+| POST | /api/runs/{id}/compare-fault | Send `{"fault":"before_commit"}` to compare state and observation divergence with recorded actions held fixed |
 | POST | /api/runs/{id}/replay | Verified digest or first divergence |
 
 ```sh

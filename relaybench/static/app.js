@@ -22,6 +22,11 @@ async function api(path, data) {
 function show(id, trace) {
   active = id;
   inspected = trace;
+  el("outcomes").textContent = "";
+  el("alternate").replaceChildren(...Object.entries(faults)
+    .filter(([key]) => key !== trace.fault)
+    .map(([key, label]) => new Option(label, key)));
+  el("alternate").value = trace.fault === "before_commit" ? "lost_ack" : "before_commit";
   el("comparison").textContent = "";
   const {metrics, initial, events} = trace;
   el("name").textContent = policies[trace.policy];
@@ -46,9 +51,10 @@ async function guarded(fn) {
   if (busy) return;
   busy = true;
   el("error").textContent = "";
-  el("run").disabled = el("replay").disabled = el("compare").disabled = true;
+  el("alternate").disabled = true;
+  el("run").disabled = el("replay").disabled = el("compare").disabled = el("branch").disabled = true;
   try { await fn(); } catch (error) { el("error").textContent = error.message; }
-  finally { busy = false; el("run").disabled = false; el("replay").disabled = !active; el("compare").disabled = !active || inspected.policy === "ollama"; }
+  finally { busy = false; el("alternate").disabled = false; el("run").disabled = false; el("branch").disabled = el("replay").disabled = !active; el("compare").disabled = !active || inspected.policy === "ollama"; }
 }
 
 async function historyList(selectLatest = false) {
@@ -89,6 +95,15 @@ el("compare").onclick = () => guarded(async () => {
     " with " + trace.metrics.writes + " committed write(s). " + difference;
   await historyList();
 });
+el("branch").onclick = () => guarded(async () => {
+  const result = await api("/api/runs/" + active + "/compare-fault", {fault: el("alternate").value});
+  const difference = step => step === null ? "none" : "step " + step;
+  el("outcomes").textContent = (result.metrics.passed ? "Passed" : "Failed") +
+    " with " + result.metrics.writes + " committed writes. First state difference: " +
+    difference(result.first_state_difference) + ". First visible difference: " +
+    difference(result.first_observation_difference) + ".";
+});
+el("alternate").onchange = () => { el("outcomes").textContent = ""; };
 el("replay").onclick = () => guarded(async () => {
   const result = await api("/api/runs/" + active + "/replay", {});
   el("result").textContent = result.verified ? "Verified all " + result.steps + " transitions · SHA-256 " + result.checksum.slice(0,12) : "First divergence at " + result.divergence;
