@@ -1,0 +1,44 @@
+[
+  {
+    "policy": "blind_retry",
+    "fault": "none",
+    "runs": 12,
+    "passed": 12,
+    "verified": 12
+  },
+  {
+    "policy": "blind_retry",
+    "fault": "before_commit",
+    "runs": 12,
+    "passed": 12,
+    "verified": 12
+  },
+  {
+    "policy": "blind_retry",
+    "fault": "lost_ack",
+    "runs": 12,
+    "passed": 0,
+    "verified": 12
+  },
+  {
+    "policy": "reconcile",
+    "fault": "none",
+    "runs": 12,
+    "passed": 12,
+    "verified": 12
+  },
+  {
+    "policy": "reconcile",
+    "fault": "before_commit",
+    "runs": 12,
+    "passed": 12,
+    "verified": 12
+  },
+  {
+    "policy": "reconcile",
+    "fault": "lost_ack",
+    "runs": 12,
+    "passed": 12,
+    "verified": 12
+  }
+]

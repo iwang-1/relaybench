@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RelayBench · Execution lab</title><link rel="stylesheet" href="/style.css"><script defer src="/app.js"></script></head>
+<body><header><div class="brand"><i aria-hidden="true">≋</i> RelayBench</div><span>Agent evaluation lab</span></header>
+<main><div class="heading"><div><p class="eyebrow">EXPERIMENT / RESERVATIONS</p><h1>Execution lab</h1><p>Can an agent reserve inventory exactly once when a tool times out?</p></div></div>
+<div class="layout"><aside><h2>Run configuration</h2><form id="config"><label>Agent policy<select id="policy"><option value="reconcile">Reconcile on timeout</option><option value="blind_retry">Blind retry</option></select></label>
+<label>Injected fault<select id="fault"><option value="lost_ack">Lost acknowledgment</option><option value="before_commit">Timeout before commit</option><option value="none">No fault</option></select></label>
+<label>Environment seed<input type="number" id="seed" min="0" max="999999" value="42" required></label>
+<button class="primary" id="run">Run experiment <b>→</b></button></form>
+<section class="history"><h2>Recent runs</h2><div id="history"></div></section></aside>
+<article><div class="title"><div><p class="eyebrow">RUN INSPECTOR</p><h2 id="name">Reservation recovery</h2></div><span id="status" class="pill">Ready</span></div>
+<p id="context">Run an experiment to inspect its tool calls and final inventory.</p>
+<div class="metrics"><div>Tool calls<strong id="steps">—</strong></div><div>Committed writes<strong id="writes">—</strong></div><div>Timeouts<strong id="timeouts">—</strong></div></div>
+<section><div class="sectionhead"><h3>Execution trace</h3><button disabled id="replay">Verify replay</button></div><p id="result" role="status"></p><div id="events"></div></section>
+<section><h3>Paired comparison</h3><p class="hint">Run the other baseline on the same seed and fault.</p><button disabled id="compare">Compare policies</button><p id="comparison" role="status"></p></section><section><h3>Evaluation checks</h3><div id="checks"></div></section></article></div><p id="error" role="alert"></p></main></body></html>
