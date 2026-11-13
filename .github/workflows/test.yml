@@ -14,5 +14,10 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -v
-      - run: python -m relaybench matrix --seeds 12
+      - name: Check committed experiment results against the engine
+        run: |
+          python -m examples.lost_ack > "$RUNNER_TEMP/lost_ack.json"
+          diff -u examples/lost_ack.json "$RUNNER_TEMP/lost_ack.json"
+          python -m relaybench matrix --seeds 12 > "$RUNNER_TEMP/baseline-results.json"
+          diff -u docs/baseline-results.json "$RUNNER_TEMP/baseline-results.json"
       - run: node --check relaybench/static/app.js
