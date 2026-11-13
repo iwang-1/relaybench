@@ -136,3 +136,28 @@ def replay(trace):
     if digest({k: v for k, v in trace.items() if k != "checksum"}) != trace["checksum"]:
         return mismatch("checksum")
     return {"verified": True, "steps": len(events), "checksum": trace["checksum"]}
+
+
+def compare_fault(trace, fault):
+    """Hold the recorded actions fixed while changing the write fault."""
+    if fault not in FAULTS:
+        raise ValueError("unknown fault")
+    verification = replay(trace)
+    if not verification["verified"]:
+        raise ValueError("source trace diverged at " + verification["divergence"])
+    world = deepcopy(trace["initial"])
+    events = []
+    injected = False
+    first_state = first_observation = None
+    for original in trace["events"]:
+        step = original["step"]
+        updated = event(world, original["action"], fault, injected, step)
+        injected |= updated["fault_injected"]
+        events.append(updated)
+        if first_state is None and updated["after"] != original["after"]:
+            first_state = step
+        if first_observation is None and updated["observation"] != original["observation"]:
+            first_observation = step
+    return {"source_checksum": trace["checksum"], "fault": fault,
+            "first_state_difference": first_state, "first_observation_difference": first_observation,
+            "metrics": grade(trace["initial"], world, events)}

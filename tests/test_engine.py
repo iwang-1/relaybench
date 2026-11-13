@@ -3,7 +3,7 @@ from copy import deepcopy
 from unittest.mock import patch
 from io import BytesIO
 
-from relaybench.engine import FAULTS, action, dispatch, execute, fixture, replay
+from relaybench.engine import FAULTS, compare_fault, action, dispatch, execute, fixture, replay
 from relaybench.model import local_policy
 
 
@@ -73,3 +73,17 @@ class EngineTests(unittest.TestCase):
         with patch("relaybench.model.urlopen", return_value=BytesIO(b"broken")):
             with self.assertRaises(RuntimeError):
                 local_policy("test")({}, [])
+
+    def test_fixed_actions_separate_hidden_and_observable_divergence(self):
+        trace = execute(42, "reconcile", "lost_ack")
+        original = deepcopy(trace)
+        report = compare_fault(trace, "before_commit")
+        self.assertEqual(report["first_state_difference"], 2)
+        self.assertEqual(report["first_observation_difference"], 3)
+        self.assertEqual(report["metrics"]["writes"], 0)
+        self.assertFalse(report["metrics"]["passed"])
+        self.assertEqual(trace, original)
+        self.assertEqual(compare_fault(trace, "lost_ack")["metrics"], trace["metrics"])
+        trace["events"][0]["after"] = "changed"
+        with self.assertRaisesRegex(ValueError, "step 1"):
+            compare_fault(trace, "before_commit")

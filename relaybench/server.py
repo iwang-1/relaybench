@@ -3,13 +3,13 @@ import re
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from .engine import execute, replay
+from .engine import compare_fault, execute, replay
 from .model import local_policy
 
 ASSETS = Path(__file__).with_name("static")
 FILES = {"/": ("index.html", "text/html"), "/app.js": ("app.js", "text/javascript"),
          "/style.css": ("style.css", "text/css")}
-RUN = re.compile(r"/api/runs/([0-9a-f]{32})(/replay)?")
+RUN = re.compile(r"/api/runs/([0-9a-f]{32})(/replay|/compare-fault)?")
 
 
 def server(port, store, model=None):
@@ -66,6 +66,10 @@ def server(port, store, model=None):
                 if match and match[2]:
                     trace = store.read(match[1])
                     if trace:
+                        if match[2] == "/compare-fault":
+                            if set(data) != {"fault"}:
+                                raise ValueError("expected fault")
+                            return self.reply(200, compare_fault(trace, data["fault"]))
                         return self.reply(200, replay(trace))
                 self.reply(404, {"error": "not found"})
             except (ValueError, TypeError, RecursionError) as exc:

@@ -49,6 +49,8 @@ class ApiTests(unittest.TestCase):
         status, run = self.request("POST", "/api/runs", dict(seed=5, policy="blind_retry", fault="lost_ack"))
         self.assertEqual(status, 201)
         path = "/api/runs/" + run["id"]
+        self.assertEqual(self.request("POST", path + "/compare-fault", {"fault": "before_commit"})[1]["metrics"]["writes"], 1)
+        self.assertEqual(self.request("POST", path + "/compare-fault", {"fault": "bad"})[0], 400)
         self.assertFalse(self.request("GET", path)[1]["metrics"]["passed"])
         self.assertTrue(self.request("POST", path + "/replay", {})[1]["verified"])
         self.assertEqual(self.request("GET", "/api/runs")[1][0]["id"], run["id"])
