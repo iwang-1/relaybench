@@ -2,6 +2,17 @@
 
 An execution and evaluation lab for tool-using agents. A reservation tool times out. Did the write happen? Give two agents the same inventory, the same request and the same timeout, then inspect the first decision that changes the outcome.
 
+## See the failure on GitHub
+
+The request is for **one unit from delta**. On step 2 the tool records the reservation, then returns a timeout. Both policies see the same error. Their next action determines the outcome.
+
+| After the timeout | Next tool call | Receipts at completion | Task verdict |
+| --- | --- | --- | --- |
+| Reconcile on timeout | Inspect the ledger, find receipt 1 | 1 | Pass |
+| Blind retry | Reserve one more unit, receive receipt 2 | 2 | Fail |
+
+[Inspect the recorded actions, receipts and replay digests](examples/lost_ack.json). To regenerate this pair, run `python3 -m examples.lost_ack` from the repository root.
+
 ![Run inspector showing a lost acknowledgment, four tool calls, one committed write and a verified replay](docs/demo.png)
 
 ## Run the demo
