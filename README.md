@@ -72,3 +72,21 @@ curl -s http://127.0.0.1:8765/api/runs -H 'Content-Type: application/json' \
 ```
 
 Runs are stored in `.relaybench/runs.sqlite3`. Use `--db PATH` to isolate a session. See [architecture and operational boundaries](docs/architecture.md) for trace semantics, persistence and coverage.
+
+## Local model recovery study
+
+The CLI study adds a second environment: a revision-checked catalog. An injected conflict invalidates the first publish attempt. Correct recovery requires reading a fresh revision, publishing once, and signaling completion. The browser inspector currently covers the reservation task.
+
+On a local Qwen2.5-Coder-14B-Instruct model (4-bit MLX, LM Studio, temperature zero), five scenarios at seed 42 were run once per prompt variant, each paired with a scripted reference:
+
+| Catalog prompt variant | Healthy reservation | Timeout before commit | Lost acknowledgment | Healthy catalog | Catalog conflict |
+| --- | --- | --- | --- | --- | --- |
+| Original | Pass | Pass | Fail | Fail | Fail |
+| Explicit JSON example | Pass | Pass | Fail | Fail | Fail |
+| JSON example and once-only completion instruction | Pass | Pass | Fail | Pass | Pass |
+
+The reservation prompt stayed fixed. The model blindly retried after both timeouts, duplicating the reservation when the first write committed. In the original catalog run the model wrapped its action in an extra JSON object. The example fixed the shape; the model then published successfully but kept issuing calls. Adding the completion rule yielded one write and a finish in both observed catalog runs. Every scripted reference passed. These 15 model trajectories describe one seed and model configuration.
+
+[Original trajectories](docs/initial-model-study.json) · [Schema example](docs/local-model-study.json) · [Completion instruction](docs/completion-model-study.json)
+
+Run `python3 -m examples.model_study docs/completion-model-study.json` to re-execute the saved decisions offline. To capture a new run, serve a model through LM Studio on loopback port 1234, then run `python3 -m examples.model_study my-study.json --model YOUR_MODEL_ID --variant completion`. The JSON includes the prompts, every proposed action and observation, final state, write counts and verdicts. The local study used the model alias `relaybench-local`.

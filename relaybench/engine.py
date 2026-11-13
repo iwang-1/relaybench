@@ -88,15 +88,15 @@ def grade(initial, world, events):
 
 
 def execute(seed, policy, fault, decide=None, model=None):
-    if policy not in POLICIES or fault not in FAULTS:
+    if policy not in (*POLICIES, "external") or fault not in FAULTS:
         raise ValueError("unknown policy or fault")
-    if policy == "ollama" and decide is None:
+    if policy in ("ollama", "external") and decide is None:
         raise ValueError("local model is disabled")
     initial = fixture(seed)
     world, history, events = deepcopy(initial), [], []
     injected = False
     for step in range(1, LIMIT + 1):
-        call = (decide(deepcopy(initial["request"]), deepcopy(history)) if policy == "ollama"
+        call = (decide(deepcopy(initial["request"]), deepcopy(history)) if policy in ("ollama", "external")
                 else baseline(policy, initial["request"], history))
         record = event(world, call, fault, injected, step)
         events.append(record)

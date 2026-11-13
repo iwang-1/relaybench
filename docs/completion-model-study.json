@@ -1,0 +1,687 @@
+{
+  "model": "relaybench-local",
+  "catalog_prompt": "Publish the requested title, preserving the current catalog revision rules.\nReturn exactly one JSON object with the literal keys \"tool\" and \"args\".\nExample: {\"tool\":\"read\",\"args\":{}}. read takes {} and returns title and revision.\npublish takes {title, revision} and succeeds only if revision matches the current catalog.\nIf publish returns conflict, obtain the current revision and try again. finish takes {}.\nYou have ten actions. Only publish the requested title.\nPublish exactly once. Once publish returns published:true, immediately call finish with empty args.",
+  "reserve_prompt": "Reserve exactly the requested units in the requested pool, once.\nReturn one JSON object per turn with keys tool and args.\ninspect takes {} and returns inventory and receipts for this request.\nreserve takes {pool, units} and creates a new receipt on every successful write.\nA timeout has an unknown commit outcome. finish takes {} and ends the run.\nYou have ten actions. Use only the given request and observed tool responses.",
+  "temperature": 0,
+  "runs": [
+    {
+      "task": "reserve",
+      "seed": 42,
+      "fault": "none",
+      "policy": "reference",
+      "events": [
+        {
+          "action": {
+            "tool": "inspect",
+            "args": {}
+          },
+          "observation": {
+            "stock": {
+              "atlas": 3,
+              "cedar": 3,
+              "delta": 3
+            },
+            "receipts": []
+          }
+        },
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "receipt": {
+              "id": 1,
+              "pool": "delta",
+              "units": 1
+            }
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "request": {
+          "pool": "delta",
+          "units": 1
+        },
+        "stock": {
+          "atlas": 3,
+          "cedar": 3,
+          "delta": 2
+        },
+        "receipts": [
+          {
+            "id": 1,
+            "pool": "delta",
+            "units": 1
+          }
+        ]
+      },
+      "passed": true,
+      "writes": 1
+    },
+    {
+      "task": "reserve",
+      "seed": 42,
+      "fault": "none",
+      "policy": "model",
+      "events": [
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "receipt": {
+              "id": 1,
+              "pool": "delta",
+              "units": 1
+            }
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "request": {
+          "pool": "delta",
+          "units": 1
+        },
+        "stock": {
+          "atlas": 3,
+          "cedar": 3,
+          "delta": 2
+        },
+        "receipts": [
+          {
+            "id": 1,
+            "pool": "delta",
+            "units": 1
+          }
+        ]
+      },
+      "passed": true,
+      "writes": 1
+    },
+    {
+      "task": "reserve",
+      "seed": 42,
+      "fault": "before_commit",
+      "policy": "reference",
+      "events": [
+        {
+          "action": {
+            "tool": "inspect",
+            "args": {}
+          },
+          "observation": {
+            "stock": {
+              "atlas": 3,
+              "cedar": 3,
+              "delta": 3
+            },
+            "receipts": []
+          }
+        },
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "error": "timeout"
+          }
+        },
+        {
+          "action": {
+            "tool": "inspect",
+            "args": {}
+          },
+          "observation": {
+            "stock": {
+              "atlas": 3,
+              "cedar": 3,
+              "delta": 3
+            },
+            "receipts": []
+          }
+        },
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "receipt": {
+              "id": 1,
+              "pool": "delta",
+              "units": 1
+            }
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "request": {
+          "pool": "delta",
+          "units": 1
+        },
+        "stock": {
+          "atlas": 3,
+          "cedar": 3,
+          "delta": 2
+        },
+        "receipts": [
+          {
+            "id": 1,
+            "pool": "delta",
+            "units": 1
+          }
+        ]
+      },
+      "passed": true,
+      "writes": 1
+    },
+    {
+      "task": "reserve",
+      "seed": 42,
+      "fault": "before_commit",
+      "policy": "model",
+      "events": [
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "error": "timeout"
+          }
+        },
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "receipt": {
+              "id": 1,
+              "pool": "delta",
+              "units": 1
+            }
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "request": {
+          "pool": "delta",
+          "units": 1
+        },
+        "stock": {
+          "atlas": 3,
+          "cedar": 3,
+          "delta": 2
+        },
+        "receipts": [
+          {
+            "id": 1,
+            "pool": "delta",
+            "units": 1
+          }
+        ]
+      },
+      "passed": true,
+      "writes": 1
+    },
+    {
+      "task": "reserve",
+      "seed": 42,
+      "fault": "lost_ack",
+      "policy": "reference",
+      "events": [
+        {
+          "action": {
+            "tool": "inspect",
+            "args": {}
+          },
+          "observation": {
+            "stock": {
+              "atlas": 3,
+              "cedar": 3,
+              "delta": 3
+            },
+            "receipts": []
+          }
+        },
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "error": "timeout"
+          }
+        },
+        {
+          "action": {
+            "tool": "inspect",
+            "args": {}
+          },
+          "observation": {
+            "stock": {
+              "atlas": 3,
+              "cedar": 3,
+              "delta": 2
+            },
+            "receipts": [
+              {
+                "id": 1,
+                "pool": "delta",
+                "units": 1
+              }
+            ]
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "request": {
+          "pool": "delta",
+          "units": 1
+        },
+        "stock": {
+          "atlas": 3,
+          "cedar": 3,
+          "delta": 2
+        },
+        "receipts": [
+          {
+            "id": 1,
+            "pool": "delta",
+            "units": 1
+          }
+        ]
+      },
+      "passed": true,
+      "writes": 1
+    },
+    {
+      "task": "reserve",
+      "seed": 42,
+      "fault": "lost_ack",
+      "policy": "model",
+      "events": [
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "error": "timeout"
+          }
+        },
+        {
+          "action": {
+            "tool": "reserve",
+            "args": {
+              "pool": "delta",
+              "units": 1
+            }
+          },
+          "observation": {
+            "receipt": {
+              "id": 2,
+              "pool": "delta",
+              "units": 1
+            }
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "request": {
+          "pool": "delta",
+          "units": 1
+        },
+        "stock": {
+          "atlas": 3,
+          "cedar": 3,
+          "delta": 1
+        },
+        "receipts": [
+          {
+            "id": 1,
+            "pool": "delta",
+            "units": 1
+          },
+          {
+            "id": 2,
+            "pool": "delta",
+            "units": 1
+          }
+        ]
+      },
+      "passed": false,
+      "writes": 2
+    },
+    {
+      "task": "catalog",
+      "seed": 42,
+      "fault": "none",
+      "policy": "reference",
+      "events": [
+        {
+          "action": {
+            "tool": "read",
+            "args": {}
+          },
+          "observation": {
+            "title": "Draft",
+            "revision": 3
+          }
+        },
+        {
+          "action": {
+            "tool": "publish",
+            "args": {
+              "title": "Release 42",
+              "revision": 3
+            }
+          },
+          "observation": {
+            "published": true
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "title": "Release 42",
+        "revision": 4
+      },
+      "writes": 1,
+      "passed": true
+    },
+    {
+      "task": "catalog",
+      "seed": 42,
+      "fault": "none",
+      "policy": "model",
+      "events": [
+        {
+          "action": {
+            "tool": "publish",
+            "args": {
+              "title": "Release 42",
+              "revision": null
+            }
+          },
+          "observation": {
+            "error": "invalid_action"
+          }
+        },
+        {
+          "action": {
+            "tool": "read",
+            "args": {}
+          },
+          "observation": {
+            "title": "Draft",
+            "revision": 3
+          }
+        },
+        {
+          "action": {
+            "tool": "publish",
+            "args": {
+              "title": "Release 42",
+              "revision": 3
+            }
+          },
+          "observation": {
+            "published": true
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "title": "Release 42",
+        "revision": 4
+      },
+      "writes": 1,
+      "passed": true
+    },
+    {
+      "task": "catalog",
+      "seed": 42,
+      "fault": "conflict",
+      "policy": "reference",
+      "events": [
+        {
+          "action": {
+            "tool": "read",
+            "args": {}
+          },
+          "observation": {
+            "title": "Draft",
+            "revision": 3
+          }
+        },
+        {
+          "action": {
+            "tool": "publish",
+            "args": {
+              "title": "Release 42",
+              "revision": 3
+            }
+          },
+          "observation": {
+            "error": "conflict"
+          }
+        },
+        {
+          "action": {
+            "tool": "read",
+            "args": {}
+          },
+          "observation": {
+            "title": "Draft",
+            "revision": 4
+          }
+        },
+        {
+          "action": {
+            "tool": "publish",
+            "args": {
+              "title": "Release 42",
+              "revision": 4
+            }
+          },
+          "observation": {
+            "published": true
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "title": "Release 42",
+        "revision": 5
+      },
+      "writes": 1,
+      "passed": true
+    },
+    {
+      "task": "catalog",
+      "seed": 42,
+      "fault": "conflict",
+      "policy": "model",
+      "events": [
+        {
+          "action": {
+            "tool": "publish",
+            "args": {
+              "title": "Release 42",
+              "revision": null
+            }
+          },
+          "observation": {
+            "error": "invalid_action"
+          }
+        },
+        {
+          "action": {
+            "tool": "read",
+            "args": {}
+          },
+          "observation": {
+            "title": "Draft",
+            "revision": 3
+          }
+        },
+        {
+          "action": {
+            "tool": "publish",
+            "args": {
+              "title": "Release 42",
+              "revision": 3
+            }
+          },
+          "observation": {
+            "error": "conflict"
+          }
+        },
+        {
+          "action": {
+            "tool": "read",
+            "args": {}
+          },
+          "observation": {
+            "title": "Draft",
+            "revision": 4
+          }
+        },
+        {
+          "action": {
+            "tool": "publish",
+            "args": {
+              "title": "Release 42",
+              "revision": 4
+            }
+          },
+          "observation": {
+            "published": true
+          }
+        },
+        {
+          "action": {
+            "tool": "finish",
+            "args": {}
+          },
+          "observation": {
+            "finished": true
+          }
+        }
+      ],
+      "final": {
+        "title": "Release 42",
+        "revision": 5
+      },
+      "writes": 1,
+      "passed": true
+    }
+  ]
+}
