@@ -1,0 +1,43 @@
+[
+  {
+    "policy": "reconcile",
+    "actions": [
+      "inspect",
+      "reserve",
+      "inspect",
+      "finish"
+    ],
+    "receipts": [
+      {
+        "id": 1,
+        "pool": "delta",
+        "units": 1
+      }
+    ],
+    "passed": true,
+    "checksum": "d88507d98be5b798787f8942fec5ec501336b1b27a93e9b1be8af8ba25929973"
+  },
+  {
+    "policy": "blind_retry",
+    "actions": [
+      "inspect",
+      "reserve",
+      "reserve",
+      "finish"
+    ],
+    "receipts": [
+      {
+        "id": 1,
+        "pool": "delta",
+        "units": 1
+      },
+      {
+        "id": 2,
+        "pool": "delta",
+        "units": 1
+      }
+    ],
+    "passed": false,
+    "checksum": "c0e9f8256e043342a67478e9625501d611e26c9cc57d9880e1f68ec4b8325a65"
+  }
+]
