@@ -1,6 +1,15 @@
 # RelayBench
 
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/) [![dependencies: standard library only](https://img.shields.io/badge/dependencies-stdlib_only-brightgreen)](#)
+
 An execution and evaluation lab for tool-using agents. A reservation tool times out. Did the write happen? Give two agents the same inventory, the same request and the same timeout, then inspect the first decision that changes the outcome.
+
+## At a glance
+
+- **Shows the bug that kills agent reliability.** When a tool times out after its write already committed, a blind-retry policy double-books the reservation in **12 of 12** seeds; a reconcile-first policy passes **12 of 12**.
+- **Deterministic replay.** All **72** recorded trajectories reproduce exactly from their saved actions, so any failure can be re-inspected offline.
+- **Local LLM study.** On Qwen2.5-Coder-14B, two prompt changes took catalog-conflict recovery from fail to pass; the model still blind-retried after timeouts. 15 trajectories, one seed.
+- Browser run inspector, HTTP API and SQLite run store, built with the Python standard library only.
 
 ## See the failure on GitHub
 
